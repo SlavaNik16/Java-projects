@@ -26,7 +26,7 @@ public class SetMenue {
 		this.f = f;
 		color1 = Color.WHITE;
 
-		img  = "C:\\Users\\AlexN\\OneDrive\\Рабочий стол\\Славено\\Программирование\\Resourse/Knopka2.jpg";
+		img  = "E:/Knopka2.jpg";
 
 	}
 
@@ -58,8 +58,8 @@ public class SetMenue {
 		if(GamePanel.norm) g.drawString("Средне", 1650, 110);
 		if(GamePanel.hard) g.drawString("Сложно", 1650, 110);
 
-		if(GamePanel.aud) g.drawImage(new ImageIcon("C:\\Users\\AlexN\\OneDrive\\Рабочий стол\\Славено\\Программирование\\Resourse/Aud3.png").getImage(),(int) 1300,(int) 200, null);
-		if(!GamePanel.aud) g.drawImage(new ImageIcon("C:\\Users\\AlexN\\OneDrive\\Рабочий стол\\Славено\\Программирование\\Resourse/Aug2.png").getImage(), (int) 1300, (int) 200, null);
+		if(GamePanel.aud) g.drawImage(new ImageIcon("E:/Aud3.png").getImage(),(int) 1300,(int) 200, null);
+		if(!GamePanel.aud) g.drawImage(new ImageIcon("E:/Aug2.png").getImage(), (int) 1300, (int) 200, null);
 
 		if(GamePanel.control) g.drawString("Стандарт", 1300, 410);
 		if(!GamePanel.control) g.drawString("Пользовательский", 1300, 410);

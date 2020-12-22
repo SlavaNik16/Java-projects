@@ -60,6 +60,26 @@ public class Listener implements KeyListener, MouseMotionListener, MouseListener
 				GamePanel.state = GamePanel.STATES.MENUE;
 			}
 		}
+		if (key == KeyEvent.VK_1) {
+			if(GamePanel.state == GamePanel.STATES.PLAY) {
+				GamePanel.N1 = true;
+			}
+		}
+		if (key == KeyEvent.VK_2) {
+			if(GamePanel.state == GamePanel.STATES.PLAY) {
+				GamePanel.N2 = true;
+			}
+		}
+		if (key == KeyEvent.VK_3) {
+			if(GamePanel.state == GamePanel.STATES.PLAY) {
+				GamePanel.N3 = true;
+			}
+		}
+		if (key == KeyEvent.VK_4) {
+			if(GamePanel.state == GamePanel.STATES.PLAY) {
+				GamePanel.N4 = true;
+			}
+		}
 		if(GamePanel.c_menu.butCon_up.zamen) {
 			GamePanel.c_menu.butCon_up.ch_code = e.getKeyCode();
 		}
@@ -92,6 +112,18 @@ public class Listener implements KeyListener, MouseMotionListener, MouseListener
 		}
 		if (key == GamePanel.c_menu.butCon_es.ch_code) {
 			Player.setFiring(false);
+		}
+		if (key == KeyEvent.VK_1) {
+			GamePanel.N1 = false;
+		}
+		if (key == KeyEvent.VK_2) {
+			GamePanel.N2 = false;
+		}
+		if (key == KeyEvent.VK_3) {
+			GamePanel.N3 = false;
+		}
+		if (key == KeyEvent.VK_4) {
+			GamePanel.N4 = false;			
 		}
 	}
 	public void mouseClicked(MouseEvent e) {

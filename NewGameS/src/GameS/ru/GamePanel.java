@@ -1,6 +1,6 @@
 package GameS.ru;
 
-import java.awt.BasicStroke;    
+import java.awt.BasicStroke;     
 import java.awt.Color;  
 import java.awt.Dimension;
 import java.awt.Font;
@@ -11,11 +11,20 @@ import java.awt.RenderingHints;
 import java.awt.Toolkit;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-import GameS.ru.GamePanel.STATES;
+
+
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -54,6 +63,16 @@ public class GamePanel extends JPanel implements Runnable {
 	private long slowDownTimeDiff;
 	private int slowDownLength = 6000;
 
+	public static long DamageDownTime;
+	public static long DamageDownTimeDiff;
+	public static int lengthDamage = 20000;
+
+	public static long MaxLvlTime;
+	public static long MaxLvlTimeDiff;
+	public static int MaxLvlLength = 30000;
+
+
+
 	public static boolean slowStop = false;
 
 	public static boolean butmenu = true;
@@ -70,6 +89,16 @@ public class GamePanel extends JPanel implements Runnable {
 	public static boolean rules = false;
 
 	public static boolean shopmenus = false;
+
+	public static double startBoss;
+
+	public static boolean N1 = false;
+	public static boolean N2 = false;
+	public static boolean N3 = false;
+	public static boolean N4 = false;
+
+
+
 
 	public static enum STATES{MENUE, PLAY, SHOP};
 	public static  STATES state = STATES.MENUE;
@@ -146,8 +175,28 @@ public class GamePanel extends JPanel implements Runnable {
 		GamePanel.upgrade.add(new Upgrade(1450,1000,620,60,"","SHOP"));
 
 		GamePanel.shopmenu.add(new ShopMenu(100,130,620,60,"","Купить жизнь + 1 = 600 #"));
-		GamePanel.shopmenu.add(new ShopMenu(700,130,620,60,"","Зам.вр на 30 с = 1200 #"));
-		GamePanel.shopmenu.add(new ShopMenu(1300,130,620,60,"","Враг -HP/сек(50с) = 3000 #"));
+		GamePanel.shopmenu.add(new ShopMenu(700,130,620,60,"","Зам.вр на 30 с = 1 200 #"));
+		GamePanel.shopmenu.add(new ShopMenu(1300,130,620,60,"","Kill врга с 1 HP = 50 #"));
+
+		GamePanel.shopmenu.add(new ShopMenu(100,230,620,60,"","Восполнить 5 жизней = 2 500 #"));
+		GamePanel.shopmenu.add(new ShopMenu(700,230,620,60,"","Повысить мощь на 5 = 3 000 #"));
+		GamePanel.shopmenu.add(new ShopMenu(1300,230,620,60,"","Пон. хар-к врага(20c)=4 000 #"));
+
+		GamePanel.shopmenu.add(new ShopMenu(100,330,620,60,"","Пропуск 1 волн = 7 000 #"));
+		GamePanel.shopmenu.add(new ShopMenu(700,330,620,60,"","Бессмертие 30с  = 6 000 #"));
+		GamePanel.shopmenu.add(new ShopMenu(1300,330,620,60,"","Все враги зам.(1м40с) = 8 000#"));
+
+		GamePanel.shopmenu.add(new ShopMenu(100,430,620,60,"","Купить 1 count = 6 000 #"));
+		GamePanel.shopmenu.add(new ShopMenu(700,430,620,60,"","Повысить мощь на 15 = 6 000 #"));
+		GamePanel.shopmenu.add(new ShopMenu(1300,430,620,60,"","Kill всех врагов = 10 000 #"));
+
+
+		GamePanel.shopmenu.add(new ShopMenu(100,530,620,60,"","Купить 5 count = 25 000 #"));
+		GamePanel.shopmenu.add(new ShopMenu(700,530,620,60,"","Пропуск 5 волн = 30 000 #"));
+		GamePanel.shopmenu.add(new ShopMenu(1300,530,620,60,"","Ability на lvl(max)(1м)=30 000 #"));
+
+		GamePanel.shopmenu.add(new ShopMenu(400, 950, 620, 60,"", "Продажа count(1) = 5 950 #"));
+		GamePanel.shopmenu.add(new ShopMenu(1000, 950, 620, 60,"", "Победа(50 волн) = 100 000 #"));
 
 		GamePanel.shopmenu.add(new ShopMenu(1620,1000,620,60,"","Назад"));
 
@@ -261,27 +310,282 @@ public class GamePanel extends JPanel implements Runnable {
 						if(GamePanel.mouseX >  shopmenu.get(i).getX()  && GamePanel.mouseX < shopmenu.get(i).getX() + shopmenu.get(i).getW() - 320&&
 								GamePanel.mouseY > shopmenu.get(i).getY()  && GamePanel.mouseY < shopmenu.get(i).getY() + shopmenu.get(i).getH() ){	
 							shopmenu.get(i).color1 = Color.red;
-							if(i == 0) {
-								if(ShopMenu.click) {
+
+							if(i == 0) {//"Купить жизнь + 1 = 600 #"
+								if(ShopMenu.click && Player.getScore() >= 600 ) {
+									Player.score -= 600;
+									Player.lives++;
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							if(i == 1) {//Зам.вр на 30 с = 1200 #
+								if(ShopMenu.click && Player.getScore() >= 1200 ) {
+									Player.score -= 1200;
+									slowDownLength = 30000;
+									slowDownTime = System.nanoTime();
+									for (int j = 0; j < enemies.size(); j++){
+										enemies.get(j).setSlow(true);
+
+
+									}
+									if (slowDownTime != 0 ){
+										slowDownTimeDiff = (System.nanoTime() - slowDownTime)/1000000;
+										if (slowDownTimeDiff > slowDownLength){
+											slowDownTime = 0;
+											for (int j = 0; j < enemies.size(); j++){
+												enemies.get(j).setSlow(false);
+
+											}
+										}
+									}
+									if (slowDownTime != 0) {
+										g.setColor(Color.WHITE);
+										g.drawRect(20, 60, 100, 8);
+										g.fillRect(20, 60, (int) (100 - 100.0 * slowDownTimeDiff / slowDownLength), 8);
+									}
+
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							if(i == 2) {//Kill врга с 1 HP = 50 #
+								if(ShopMenu.click && Player.score >= 50) {
+									Player.score -= 50;
+
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							if(i == 3) {//Восполнить 5 жизней = 2500 #
+								if(ShopMenu.click && Player.score >= 2500) {
+									Player.score -= 2500;
+									Player.lives += 5;
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							if(i == 4) {//Повысить мощь на 5 = 3000 #
+								if(ShopMenu.click && Player.score >= 3000) {
+									Player.score -= 3000;
+									player.increase(5);
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							if(i == 5) {//Пон. хар-к врага(20c) = 4000 #
+								if(ShopMenu.click && Player.score >= 4000) {
+									Player.score -= 4000;
+									DamageDownTime = System.nanoTime();
+									for (int j = 0; j < enemies.size(); j++){
+										enemies.get(j).setSlow(true);
+									}
+									Enemy.damage += 2;
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							if(i == 6) {//Пропуск 1 волн = 7000 #
+								if(ShopMenu.click && Player.score >= 7000) {
+									Player.score -= 7000;
+
+									Wave.waveNumber += 1;
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							if(i == 7) {//Бессмертие 30с  = 6000 #
+								if(ShopMenu.click && Player.score >= 6000) {
+									Player.score -= 6000;
+									Player.loseLive1();                   
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
 
 								}
 							}
-							if(i == 1) {
-								if(ShopMenu.click) {
+							if(i == 8) {//Все враги зам. (1м40с) = 8000#
+								if(ShopMenu.click && Player.score >= 8000) {
+									Player.score -= 8000;
+									slowDownLength = 100000;
+									slowDownTime = System.nanoTime();
+									for (int j = 0; j < enemies.size(); j++){
+										enemies.get(j).setSlow(true);
 
+
+									}
+									if (slowDownTime != 0 ){
+										slowDownTimeDiff = (System.nanoTime() - slowDownTime)/1000000;
+										if (slowDownTimeDiff > slowDownLength){
+											slowDownTime = 0;
+											for (int j = 0; j < enemies.size(); j++){
+												enemies.get(j).setSlow(false);
+
+											}
+										}
+									}
+									if (slowDownTime != 0) {
+										g.setColor(Color.WHITE);
+										g.drawRect(20, 60, 100, 8);
+										g.fillRect(20, 60, (int) (100 - 100.0 * slowDownTimeDiff / slowDownLength), 8);
+									}
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
 								}
 							}
-							if(i == 2) {
-								if(ShopMenu.click) {
+							if(i == 9) {//Купить 1 count = 6000 #
+								if(ShopMenu.click&& Player.score >= 6000) {
+									Player.score -= 6000;
+									Upgrade.count += 1;
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							if(i == 10) {//Повысить мощь на 15 = 6000 #
+								if(ShopMenu.click && Player.score >= 6000) {
+									Player.score -= 3000;
+									player.increase(15);
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
+								}
 
+							}
+							if(i == 11) {//Kill всех врагов = 10000 #
+								if(ShopMenu.click && Player.score >= 10000) {
+									Player.score -= 10000;
+
+									enemies.clear();
+
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							if(i == 12) {//Купить 5 count = 25000 #
+								if(ShopMenu.click&& Player.score >= 25000) {
+									Player.score -= 25000;
+									Upgrade.count += 5;
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							if(i == 13) {//Пропуск 5 волн = 30000 #
+								if(ShopMenu.click && Player.score >= 30000) {
+									Player.score -= 30000;
+
+									Wave.waveNumber += 5;
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							if(i == 14) {//ability на max lvl(30c) = 30000 #
+								if(ShopMenu.click && Player.score >= 30000) {
+									Player.score -= 30000;
+
+									MaxLvlLength = 30000;
+									MaxLvlTime = System.nanoTime();
+
+									Player.PlayerUpSpeed += 30;
+									Player.PlayerUpDamage += 30;
+									Player.PlayerUpBullet += 30;
+
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
 								}
 							}
 
-							if(i == 3) {
+							if(i == 15) {//Продажа count(1) = 5 950 #
+								if(ShopMenu.click && Upgrade.count >= 1) {
+									Player.score += 5950;
+									Upgrade.count -= 1;
+									try {
+										Thread.sleep(100);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							if(i == 16) {//Победа(пропуск 50 волн) = 100 000 #
+								if(ShopMenu.click && Player.score >= 100000) {
+									Player.score -= 100000;
+
+									Wave.waveNumber = 50;
+									GamePanel.state = STATES.PLAY;
+									try {
+										Thread.sleep(100);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
+
+							if(i == 17) {
 								if(ShopMenu.click) {
 									state = STATES.PLAY;
 									ShopMenu.click = false;
-
+									try {
+										Thread.sleep(50);
+									}catch(Exception e) {
+										e.printStackTrace();
+									}
 								}
 							}
 						}else {
@@ -324,10 +628,38 @@ public class GamePanel extends JPanel implements Runnable {
 			String b = "Wave: " + Wave.waveNumber;
 			length = (int) g.getFontMetrics().getStringBounds(b, g).getWidth();
 			g.drawString(b, (WIDTH - length) / 2, HEIGHT / 2 + 90);
+			File r = new File("./RecordWin.txt");
+			try {
+				if(!r.exists()) r.createNewFile();
+			}catch(Exception err1) {err1.printStackTrace();}
+
+			int lastRecord1 = 1;
+
+			try {
+				FileInputStream in = new FileInputStream(r);
+				String line = Files.readAllLines(Paths.get("./RecordWin.txt")).get(0);
+				lastRecord1 = Integer.parseInt(line);
+				in.close();
+			}catch(Exception err) {err.printStackTrace();}
+
+			if(player.score > lastRecord1) {
+				try {
+					lastRecord1 = player.score;
+					Writer writer = new BufferedWriter(new OutputStreamWriter(
+							new FileOutputStream("./RecordWin.txt"), "utf-8"));
+					writer.write(String.valueOf(player.score));
+					writer.close();
+				}catch(Exception e223) {e223.printStackTrace();}
+			}
+
+			String q = "Rec: " + lastRecord1;
+			length = (int) g.getFontMetrics().getStringBounds(q, g).getWidth();
+			g.drawString(q, (WIDTH - length) / 2, HEIGHT / 2 + 120);
+
 			GameDraw();
 		}
 		if(!running && Wave.waveNumber < 51) {
-			g.setColor(Color.RED);
+			g.setColor(Color.BLACK);
 			g.setFont(new Font("Century Gothic", Font.PLAIN, 20));
 			String s = "Y O U  L O S E";
 			int length = (int) g.getFontMetrics().getStringBounds(s, g).getWidth();
@@ -339,6 +671,35 @@ public class GamePanel extends JPanel implements Runnable {
 			String b = "Wave: " + Wave.waveNumber;
 			length = (int) g.getFontMetrics().getStringBounds(b, g).getWidth();
 			g.drawString(b, (WIDTH - length) / 2, HEIGHT / 2 + 60);
+
+			File r = new File("./RecordLose.txt");
+			try {
+				if(!r.exists()) r.createNewFile();
+			}catch(Exception err1) {err1.printStackTrace();}
+
+			int lastRecord = 1;
+
+			try {
+				FileInputStream in = new FileInputStream(r);
+				String line = Files.readAllLines(Paths.get("./RecordLose.txt")).get(0);
+				lastRecord = Integer.parseInt(line);
+				in.close();
+			}catch(Exception err) {err.printStackTrace();}
+
+			if(player.score > lastRecord) {
+				try {
+					lastRecord = player.score;
+					Writer writer = new BufferedWriter(new OutputStreamWriter(
+							new FileOutputStream("./RecordLose.txt"), "utf-8"));
+					writer.write(String.valueOf(player.score));
+					writer.close();
+				}catch(Exception e223) {e223.printStackTrace();}
+			}
+
+			String q1 = "Rec: " + lastRecord;
+			length = (int) g.getFontMetrics().getStringBounds(q1, g).getWidth();
+			g.drawString(q1, (WIDTH - length) / 2, HEIGHT / 2 + 90);
+
 			GameDraw();
 		}
 	}
@@ -422,43 +783,48 @@ public class GamePanel extends JPanel implements Runnable {
 					GamePanel.mouseY > upgrade.get(i).getY() && GamePanel.mouseY < upgrade.get(i).getY() + upgrade.get(i).getH()){
 				upgrade.get(i).color1 = Color.red;
 				if(i == 0) {
-					if(Upgrade.click && Upgrade.count != 0) {
+					if((Upgrade.click && Upgrade.count != 0) ||  (Upgrade.count != 0 && N1)) {
 						Player.PlayerUpSpeed++;
 						Upgrade.count--;
 						try {
-							Thread.sleep(50);
+							Thread.sleep(100);
 						}catch(Exception e) {
 							e.printStackTrace();
 						}
 					}
 				}
 				if(i == 1) {
-					if(Upgrade.click && Upgrade.count != 0) {
+					if((Upgrade.click && Upgrade.count != 0) ||  (Upgrade.count != 0 && N2)) {
 						Player.PlayerUpDamage++;
 						Upgrade.count--;	
 						try {
-							Thread.sleep(50);
+							Thread.sleep(100);
 						}catch(Exception e) {
 							e.printStackTrace();
 						}
 					}
 				}
 				if(i == 2) {
-					if(Upgrade.click && Upgrade.count != 0) {
+					if((Upgrade.click && Upgrade.count != 0)||(Upgrade.count != 0 && N3)) {
 						Player.PlayerUpBullet++;
 						Upgrade.count--;	
 						try {
-							Thread.sleep(50);
+							Thread.sleep(100);
 						}catch(Exception e) {
 							e.printStackTrace();
 						}
 					}
 				}
 				if(i == 3) {
-					if(Upgrade.click) {
+					if(Upgrade.click || N4) {
 						state = STATES.SHOP;
 						shopmenus = true;
 						Upgrade.click = false;
+						try {
+							Thread.sleep(100);
+						}catch(Exception e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}else {
@@ -467,7 +833,6 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 	}
 
-	@SuppressWarnings("static-access")
 	private void GameUpdate() {
 		player.update();
 
@@ -518,7 +883,14 @@ public class GamePanel extends JPanel implements Runnable {
 				double dy = by - ey;
 				double dist = Math.sqrt(dx * dx + dy * dy);
 				if (dist < br + er){
-					e.hit();
+					if(Wave.waveNumber == 10 || Wave.waveNumber == 20 || Wave.waveNumber == 30 || Wave.waveNumber == 50 ) {
+						startBoss = (e.health -= e.damage);
+						if(e.health <= 0) {
+							e.dead = true;
+						}
+					}else{
+						e.hit();
+					}
 					bullets.remove(i);
 					i--;
 					break;
@@ -526,19 +898,20 @@ public class GamePanel extends JPanel implements Runnable {
 			}
 		}
 
+
 		for (int i = 0; i < enemies.size(); i++){
 			if (enemies.get(i).isDead()){
 				Enemy e = enemies.get(i);
 				double rang = Math.random();
-				if (rang < 0.005){
+				if (rang < 0.002){
 					powerUps.add(new PowerUp(5,e.getX(), e.getY()));
-				}else if(rang < 0.020) {
+				}else if(rang < 0.010) {
 					powerUps.add(new PowerUp(1, e.getX(), e.getY()));
-				}else  if (rang < 0.030){
+				}else  if (rang < 0.020){
 					powerUps.add(new PowerUp(4, e.getX(), e.getY()));
-				}else if (rang < 0.050) {
+				}else if (rang < 0.045) {
 					powerUps.add(new PowerUp(3, e.getX(), e.getY()));
-				} else if (rang < 0.120){
+				} else if (rang < 0.090){
 					powerUps.add(new PowerUp(2, e.getX(), e.getY()));
 				}else {}
 
@@ -603,6 +976,7 @@ public class GamePanel extends JPanel implements Runnable {
 				}
 
 				if(type == 4){
+					slowDownLength = 6000;
 					slowDownTime = System.nanoTime();
 					for (int j = 0; j < enemies.size(); j++){
 						enemies.get(j).setSlow(true);
@@ -631,7 +1005,31 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 		if (player.isDead()){
 			running = false;
+
 		}
+
+		if (DamageDownTime != 0 ){
+			DamageDownTimeDiff = (System.nanoTime() - DamageDownTime)/1000000;
+			if (DamageDownTimeDiff > lengthDamage){
+				DamageDownTime = 0;
+				for (int j = 0; j < enemies.size(); j++){
+					enemies.get(j).setSlow(false);
+
+				}
+			}
+		}
+		if (MaxLvlTime != 0 ){
+			MaxLvlTimeDiff = (System.nanoTime() - MaxLvlTime)/1000000;
+			if (MaxLvlTimeDiff > MaxLvlLength){
+				MaxLvlTime = 0;
+				Player.PlayerUpSpeed -= 30;
+				Player.PlayerUpDamage -= 30;
+				Player.PlayerUpBullet -= 30;
+
+				Bullet.speed = 10;
+			}
+		}
+
 	}
 
 	private void GameRender() {
@@ -675,6 +1073,13 @@ public class GamePanel extends JPanel implements Runnable {
 			g.setColor(Color.WHITE);
 			g.drawRect(20, 60, 100, 8);
 			g.fillRect(20, 60, (int) (100 - 100.0 * slowDownTimeDiff / slowDownLength), 8);
+
+		}
+		if (MaxLvlTime != 0) {
+			g.setColor(Color.yellow);
+			g.drawRect(20, 60, 100, 8);
+			g.fillRect(20, 60, (int) (100 - 100.0 * MaxLvlTimeDiff / MaxLvlLength), 8);
+
 		}
 
 		g.setColor(Color.YELLOW);
@@ -688,7 +1093,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("Century Gothic", Font.PLAIN, 16));
-		g.drawString("Score " + Player.getScore()+" #", WIDTH - 100, 30);
+		g.drawString("Score " + Player.getScore()+" #", WIDTH - 140, 30);
 
 
 		for (int i = 0; i < player.getLives(); i++){
@@ -701,7 +1106,37 @@ public class GamePanel extends JPanel implements Runnable {
 
 
 		}
+
+		if (DamageDownTime != 0) {
+			g.setColor(Color.RED);
+			g.drawRect(20, 60, 100, 8);
+			g.fillRect(20, 60, (int) (100 - 100.0 * DamageDownTimeDiff / lengthDamage), 8);
+		}
+
+
+		if (Wave.waveNumber == 10) {
+			g.setColor(Color.RED);
+			g.fillRect(20, 60, (int) (startBoss/9), 15);
+
+		}
+
+		if (Wave.waveNumber == 20) {		
+			g.setColor(Color.RED);
+			g.fillRect(20, 70, (int) (startBoss/27), 19);
+
+		}
+		if (Wave.waveNumber == 30) {		
+			g.setColor(Color.RED);
+			g.fillRect(20, 80, (int) (startBoss/39), 23);
+		}
+		if (Wave.waveNumber == 50) {
+			g.setColor(Color.RED);
+			g.fillRect(20, 90, (int) (startBoss/90), 27);
+		}
+
+
 	}
+
 	private void GameDraw() {
 		Graphics g2 = this.getGraphics() ;
 		g2.drawImage(image, 0,0,null);

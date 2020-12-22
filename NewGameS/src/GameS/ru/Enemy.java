@@ -22,20 +22,21 @@ public class Enemy {
 	private double rad;
 	public static double speed;
 
-	public static int health;
+	public int health;
 	private int type;
 	private int rang;
+	public double startBoss;;
 
 	private boolean ready;
-	public boolean dead;
+	public  boolean dead;
 
-	private boolean hit;
-	public static int damage;
-	private long hitTime;
+	private  boolean hit;
+	public static  int damage;
+	private  long hitTime;
 
 	private boolean slow;
 
-	public int lvl;
+	public static int lvl;
 
 	public Enemy(int type, int rang) {
 		this.type = type;
@@ -96,7 +97,7 @@ public class Enemy {
 			if (rang == 10){
 				speed = 30 + lvl;
 				r = 80 + lvl;
-				health = 1575 + lvl + lvl + lvl;
+				health = 4725 +  (lvl * 100);
 			}
 		}
 		if (type == 2) {
@@ -150,7 +151,7 @@ public class Enemy {
 			if (rang == 10){
 				speed = 40 + lvl;
 				r = 150 + lvl;
-				health = 4725 + lvl + lvl + lvl;
+				health = 14175 + (lvl * 100);
 
 			}
 
@@ -206,7 +207,7 @@ public class Enemy {
 			if (rang == 10){
 				speed = 60 + lvl;
 				r = 100 + lvl;
-				health = 6825 + lvl + lvl + lvl;
+				health = 20475 + (lvl * 100);
 
 			}
 		}
@@ -262,7 +263,7 @@ public class Enemy {
 			if (rang == 10){
 				speed = 50 + lvl;
 				r = 150 + lvl;
-				health = 15750 + lvl + lvl + lvl;
+				health = 47250 + (lvl * 100);
 
 			}
 		}
@@ -314,7 +315,7 @@ public class Enemy {
 	}
 	public void setSlow(boolean b){ slow = b;}
 
-	public void hit() {
+	public  void hit() {
 		health -= damage;
 		if (health <= 0) {
 			dead = true;
@@ -334,7 +335,27 @@ public class Enemy {
 					amount = 0;
 				}
 			}
-
+			if (type == 2) {
+				if (rang < 9 && rang > 1) {
+					amount = 2;
+				}else if (rang == 10 || rang == 9){
+					amount = 0;
+				}
+			}
+			if (type == 3) {
+				if (rang <= 9 && rang > 1) {
+					amount = 2;
+				}else if (rang == 10){
+					amount = 0;
+				}
+			}
+			if (type == 4) {
+				if (rang < 10 && rang > 1) {
+					amount = 2;
+				}else if (rang == 10){
+					amount = 0;
+				}
+			}
 
 
 
@@ -383,7 +404,7 @@ public class Enemy {
 		if (x > GamePanel.WIDTH - r && dx > 0) {
 			dx = -dx;
 		}
-		if (y > GamePanel.HEIGHT - r - 35 && dy > 0) {
+		if (y > GamePanel.HEIGHT - r - 85 && dy > 0) {
 			dy = -dy;
 		}
 
@@ -412,6 +433,7 @@ public class Enemy {
 			g.fillOval((int) x - r, (int) y - r, 2 * r, 2 * r);
 			g.setStroke(new BasicStroke(1));
 		}
+
 
 	}
 }

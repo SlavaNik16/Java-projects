@@ -17,6 +17,7 @@ public class PowerUp {
 
 
 	private Color color1;
+	
 
 
 	public  PowerUp(int type, double x, double y) {//тип бонуса, и его координаты

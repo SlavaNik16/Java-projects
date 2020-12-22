@@ -1,11 +1,7 @@
 package GameS.ru;
 
-import java.awt.Color;  
+import java.awt.Color;   
 import java.awt.Graphics2D;
-
-
-
-
 
 
 public class Player {
@@ -34,14 +30,17 @@ public class Player {
 
 	public static int lives;
 
-	private static int score;
+	public  static int score;
 
 
-	private static boolean recovering;
+	public static boolean recovering;
 	private static long recoveringTime;
 
+	public static boolean recovering1 ;
+	public static long recoveringTime1 ;
+
 	public static int powerLevel;
-	private int power;
+	public static int power;
 	private int[] requestPower = {
 			1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 
 			21, 22, 23 ,24 ,25, 26, 27, 28 ,29 ,30, 31,32,33,34,35,36,37,38,39,40
@@ -92,8 +91,11 @@ public class Player {
 		recovering = false;
 		recoveringTime = 0;
 
-		score = 0;
+		recovering1 = false;
+		recoveringTime1 = 0;
 
+
+		score = 0;
 		PlayerUpSpeed = 0;
 		PlayerUpBullet = 0;
 		PlayerUpDamage = 0;
@@ -114,7 +116,7 @@ public class Player {
 	public  int getLives() {
 		return lives;
 	}
-	public void gainLive() {
+	public  void gainLive() {
 		lives++;
 	}
 
@@ -144,12 +146,23 @@ public class Player {
 
 	public static void addScore(int i) {
 		score += i;
+		if(GamePanel.norm) {
+			score += 2;
+		}
+		if(GamePanel.hard) {
+			score += 5;
+		}
 	}
 
 	public static void loseLive() {
 		lives--;
 		recovering = true;
 		recoveringTime = System.nanoTime();
+	}
+	public static void loseLive1() {
+		lives = lives;
+		recovering1 = true;
+		recoveringTime1 = System.nanoTime();
 	}
 
 	public boolean isRecovering() {
@@ -232,7 +245,7 @@ public class Player {
 		if (x < r) x = r;
 		if (y < r) y = r;
 		if (x > GamePanel.WIDTH - r) x = GamePanel.WIDTH - r;
-		if (y > GamePanel.HEIGHT - r - 35) y = GamePanel.HEIGHT - r - 35;
+		if (y > GamePanel.HEIGHT - r - 85) y = GamePanel.HEIGHT - r -85;
 
 		dx = 0;
 		dy = 0;
@@ -319,26 +332,85 @@ public class Player {
 				}
 
 
-
-				for(int i = 0; i < 16; i++) {
-					if(PlayerUpSpeed == i) {
-						firingDelay = (200 - i * 20);
-						GamePanel.bullets.add(new Bullet(270, x, y));
-
-					}
+				if (PlayerUpSpeed == 1) {
+					firingDelay = 180;
+					GamePanel.bullets.add(new Bullet(270, x, y));
+				}
+				if (PlayerUpSpeed == 2) {
+					firingDelay = 160;
+					GamePanel.bullets.add(new Bullet(270, x, y));
+				}
+				if (PlayerUpSpeed == 3) {
+					firingDelay = 140;
+					GamePanel.bullets.add(new Bullet(270, x, y));
+				}
+				if (PlayerUpSpeed == 4) {
+					firingDelay = 120;
+					GamePanel.bullets.add(new Bullet(270, x, y));
+				}
+				if (PlayerUpSpeed == 5) {
+					firingDelay = 100;
+					GamePanel.bullets.add(new Bullet(270, x, y));
+				}
+				if (PlayerUpSpeed == 6) {
+					firingDelay = 80;
+					GamePanel.bullets.add(new Bullet(270, x, y));
+				}
+				if (PlayerUpSpeed == 7) {
+					firingDelay = 60;
+					GamePanel.bullets.add(new Bullet(270, x, y));
+				}
+				if (PlayerUpSpeed == 8) {
+					firingDelay = 40;
+					GamePanel.bullets.add(new Bullet(270, x, y));
+				}
+				if (PlayerUpSpeed == 9) {
+					firingDelay = 20;
+					GamePanel.bullets.add(new Bullet(270, x, y));
+				}
+				if (PlayerUpSpeed == 10) {
+					firingDelay = 10;
+					GamePanel.bullets.add(new Bullet(270, x, y));
+				}
+				if(PlayerUpSpeed == 11) {
+					firingDelay = 5;
+					GamePanel.bullets.add(new Bullet(270, x, y));
+				}
+				if(PlayerUpSpeed == 12) {
+					firingDelay = 1;
+					Bullet.speed += 1;
+					System.out.println(Bullet.speed);
+					GamePanel.bullets.add(new Bullet(270, x, y));
+				}
+				if(PlayerUpSpeed == 13) {
+					firingDelay = 1;
+					Bullet.speed += 2;
+					System.out.println(Bullet.speed);
+					GamePanel.bullets.add(new Bullet(270, x, y));
+				}
+				if(PlayerUpSpeed == 14) {
+					firingDelay = 1;
+					Bullet.speed += 3;
+					GamePanel.bullets.add(new Bullet(270, x, y));
+				}
+				if(PlayerUpSpeed >= 15) {
+					firingDelay = 1;
+					Bullet.speed += 4;
+					GamePanel.bullets.add(new Bullet(270, x, y));
 				}
 
 
-				for(int i = 0; i < 16; i++) {
+				for(int i = 0; i < 31; i++) {
 					if(PlayerUpDamage == i) {
 						Enemy.damage = 1 + i;
 						GamePanel.bullets.add(new Bullet(270, x, y));
 
+
 					}
 				}
 
 
-			if(PlayerUpBullet == 0) {
+				if(PlayerUpBullet == 0) {
 					GamePanel.bullets.add(new Bullet(270, x, y));
 				}
 				if (PlayerUpBullet == 1) {
@@ -575,10 +647,10 @@ public class Player {
 
 					GamePanel.bullets.add(new Bullet(110, x + 5, y));
 					GamePanel.bullets.add(new Bullet(70, x - 5, y));
-					}
+				}
 			}
 		}
-		if (recovering) {
+		if (recovering && !recovering1) {
 			long elapsed = (System.nanoTime() - recoveringTime) / 1000000;
 			if (elapsed > 2000) {
 				recoveringTime = 0;
@@ -586,10 +658,18 @@ public class Player {
 			}
 
 		}
+		if (recovering1) {
+			long elapsed = (System.nanoTime() - recoveringTime1) / 1000000;
+			if (elapsed > 30000) {
+				recoveringTime1 = 0;
+				recovering1 = false;
+			}
+
+		}
 	}
 
 	public void draw(Graphics2D g) {
-		if (recovering) {
+		if (recovering || recovering1) {
 			g.setColor(color2);
 			g.fillOval(x - r, y - r, 2 * r, 2 * r);
 		} else {

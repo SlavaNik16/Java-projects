@@ -8,13 +8,14 @@ import javax.swing.ImageIcon;
 
 public class ControlMenu {
 
-	ButControl butCon_up = new ButControl(550,10,300,67,"C:\\Users\\AlexN\\OneDrive\\Рабочий стол\\Славено\\Программирование\\Resourse/Knopka2.jpg", "Курс вверх",38);
-	ButControl butCon_d = new ButControl(550,110,300,67,"C:\\\\Users\\\\AlexN\\\\OneDrive\\\\Рабочий стол\\\\Славено\\\\Программирование\\\\Resourse/Knopka2.jpg", "Курс вниз",40);
-	ButControl butCon_l = new ButControl(550,210,300,67,"C:\\\\Users\\\\AlexN\\\\OneDrive\\\\Рабочий стол\\\\Славено\\\\Программирование\\\\Resourse/Knopka2.jpg", "Курс влево",37);
-	ButControl butCon_r = new ButControl(550,310,300,67,"C:\\\\Users\\\\AlexN\\\\OneDrive\\\\Рабочий стол\\\\Славено\\\\Программирование\\\\Resourse/Knopka2.jpg", "Курс вправо",39);
-	ButControl butCon_es = new ButControl(550,410,300,67,"C:\\\\Users\\\\AlexN\\\\OneDrive\\\\Рабочий стол\\\\Славено\\\\Программирование\\\\Resourse/Knopka2.jpg", "Space",32);
-	ButControl butCon_k = new ButControl(1550,1000,300,67,"C:\\\\Users\\\\AlexN\\\\OneDrive\\\\Рабочий стол\\\\Славено\\\\Программирование\\\\Resourse/Knopka2.jpg", "Назад",8);
-
+	public static String img = "E:/Knopka2.jpg";
+	ButControl butCon_up = new ButControl(550,10,300,67,img, "Курс вверх",38);
+	ButControl butCon_d =  new ButControl(550,110,300,67,img, "Курс вниз",40);
+	ButControl butCon_l = new ButControl(550,210,300,67,img, "Курс влево",37);
+	ButControl butCon_r = new ButControl(550,310,300,67,img, "Курс вправо",39);
+	ButControl butCon_es = new ButControl(550,410,300,67,img, "Space",32);
+	ButControl butCon_k = new ButControl(1550,1000,300,67,img, "Назад",8);
+	
 	public void draw(Graphics2D g){
 		butCon_up.draw(g);
 		butCon_d.draw(g);
@@ -99,7 +100,7 @@ public class ControlMenu {
 		public double getH() {return h;}
 
 		public void draw(Graphics2D g) {
-			g.drawImage(new ImageIcon("C:\\\\Users\\\\AlexN\\\\OneDrive\\\\Рабочий стол\\\\Славено\\\\Программирование\\\\Resourse/Knopka2.jpg").getImage(), (int) x, (int) y, null);
+			g.drawImage(new ImageIcon("E:/Knopka2.jpg").getImage(), (int) x, (int) y, null);
 			g.setColor(color1);
 			g.setFont(new Font("Arial", Font.ITALIC, 40));
 

@@ -29,7 +29,7 @@ public class ShopMenu {
 		this.f = f;
 		color1 = Color.WHITE;
 
-		img  = "C:\\Users\\AlexN\\OneDrive\\Рабочий стол\\Славено\\Программирование\\Resourse/Knopka2.jpg";
+		img  = "E:/Knopka2.jpg";
 
 	}
 
@@ -52,11 +52,13 @@ public class ShopMenu {
 		g.drawString(f, (int) (x + w / 2) - (int) (length / 2) - 160, (int) y + (int) (h/3) * 2);
 
 		g.setColor(Color.red);
-		g.setFont(new Font("Arial", Font.ITALIC, 50));
+		g.setFont(new Font("Arial", Font.ITALIC, 45));
 
 		g.drawString("Навыки", 150,50);
 		g.drawString("Бонусы", 750,50);
 		g.drawString("Баффы", 1350,50);
+		g.drawString("Score = " + Player.score + " #", 50,1000);
+		g.drawString("Count = " + Upgrade.count, 50,950);
 
 
 

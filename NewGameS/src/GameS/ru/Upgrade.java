@@ -37,7 +37,7 @@ public class Upgrade {
 		color1 = Color.WHITE;
 		count = 0;
 
-		img  = "C:\\Users\\AlexN\\OneDrive\\Рабочий стол\\Славено\\Программирование\\Resourse/Knopka2.jpg";
+		img  = "E:/Knopka2.jpg";
 	}
 
 	public double getX() {return x;}

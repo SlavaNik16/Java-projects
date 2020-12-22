@@ -14,7 +14,7 @@ public class Bullet{
 	private double rad;
 
 
-	private double speed;
+	public static double speed;
 
 
 
